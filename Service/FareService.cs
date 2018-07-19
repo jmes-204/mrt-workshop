@@ -12,23 +12,15 @@ namespace Service
             int sourcePosition = 0;
             int distance = 0;
 
-            List<Destination> destinations = DestinationManager.InitDestinations();
-            foreach (var item in destinations)
+            sourcePosition = getPostionByTerminalId(source);
+            destinationPosition = getPostionByTerminalId(destination);
+            if (sourcePosition == -1 || destinationPosition == -1)
             {
-                if (item.ID == source)
-                {
-                    sourcePosition = item.Position;
-                }
-                if (item.ID == destination)
-                {
-                    destinationPosition = item.Position;
-                }
+                return 0;
             }
-            distance = (destinationPosition - sourcePosition);
-            if (distance < 0)
-            {
-                distance = distance * -1;
-            }
+            
+            distance = Math.Abs(destinationPosition - sourcePosition);
+
             List<FareRate> fareRate = FareRateManager.InitFareRates();
             foreach (var item in fareRate)
             {
@@ -37,8 +29,21 @@ namespace Service
                     return item.Price;
                 }
             }
-
             return 0;
+        }
+
+        private int getPostionByTerminalId(string terminalId)
+        {
+            List<Terminal> destinations = TerminalManager.InitTerminals();
+            foreach (var item in destinations)
+            {
+                if (item.ID == terminalId)
+                {
+                    return item.Position;
+                }
+            }
+
+            return -1;
         }
     }
 }
